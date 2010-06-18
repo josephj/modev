@@ -19,10 +19,10 @@ $static["index"][] = array(
     </body>
 */
 $static["index"][] = array(
-    "tag"         => "link"
+    "tag"         => "link",
     "type"        => "text/css",  // alias : css, js
     "rel"         => "stylesheet",
-    "href"        => STATIC_URL . "min?module=core&type=js&nominify&nocombo", 
+    "href"        => STATIC_URL . "min?module=core&type=css&nominify&nocombo", 
     "media"       => "screen",
     "is_top"      => TRUE, 
 );
@@ -34,7 +34,7 @@ $static["index"][] = array(
     </body>
 */
 $static["index"][] = array(
-    "tag"         => "link"
+    "tag"         => "link",
     "type"        => "text/css", 
     "rel"         => "stylesheet",
     "href"        => STATIC_URL . "min?module=core_nojs&type=css", 
