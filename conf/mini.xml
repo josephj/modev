@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mini xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <path type="css">$DEV_ROOT/static</path>
+    <path type="js">$DEV_ROOT/static</path>
+    
+    <module id="yui">
+        <file type="css" src="yui/2.8.1/reset/reset.css" />
+        <file type="css" src="yui/2.8.1/fonts/fonts.css" />
+        <file type="css" src="yui/2.8.1/grids/grids.css" />
+        <file type="js"  src="yui/3.1.1/yui.js" />
+    </module>
+
+    <module id="index">
+        <require module="yui">
+        <file type="css" src="http://yui.yahooapis.com/2.6.0/build/menu/assets/skins/sam/menu.css" /> 
+        <file type="css" src="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" /> 
+        <file type="css" src="http://yui.yahooapis.com/2.6.0/build/container/assets/skins/sam/container.css" /> 
+        <file type="css" src="class.css" /> 
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/connection/connection.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/dragdrop/dragdrop.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/animation/animation.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/get/get.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/container/container.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/menu/menu.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/element/element-beta.js" />
+        <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/button/button.js" />
+        <file type="js"  src="class.js" />
+    </module>
+
+</mini>
