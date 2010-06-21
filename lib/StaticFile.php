@@ -1,25 +1,41 @@
 <?php
-class StaticFile
-{
+class StaticFile {
+
+    public $config_file;
+    public $module_name;
+    protected $config;
+
     public function __construct($config_file, $module_name)
     {
-        $this->configFile = $config_file;
-        $this->moduleName = $module_name;
+        $this->config_file = $config_file;
+        $this->module_name = $module_name;
     }
 
-    public function getFiles($is_top = TRUE)
+    /*
+     * From configuration file, get static file list array for current module
+     *
+     * @method get_files
+     * @param  $is_top
+     * @return array
+     */
+    public function get_files($is_top = TRUE)
     {
-        if ( ! file_exists($this->configFile)) 
+        if ( ! file_exists($this->config_file)) 
         {
             return FALSE;
+        }
+        if ( ! isset($this->config))
+        {
+            require_once $this->config_file;
+            $this->config = $static;
         }
 
-        require_once $this->configFile;
-        if ( ! isset($static[$this->moduleName]) || count($static[$this->moduleName]) === 0)
+
+        if ( ! isset($this->config[$this->module_name]) || count($this->config[$this->module_name]) === 0)
         {
             return FALSE;
         }
-        $files          = $static[$this->moduleName];    
+        $files          = $this->config[$this->module_name];    
         $js_files       = array();
         $css_files      = array();
         $noscript_files = array();
@@ -64,17 +80,21 @@ class StaticFile
         return $result;
     }
 
-    public function getTopFiles()
+    public function get_top_files()
     {
-        $files = $this->getFiles(TRUE);
-        return $this->getHtml($files);
+        $files = $this->get_files(TRUE);
+        return $this->get_html($files);
+        //return self::get_html($files);
     }
-    public function getBottomFiles()
+
+    public function get_bottom_files()
     {
-        $files = $this->getFiles(FALSE);
-        return $this->getHtml($files);
+        $files = $this->get_files(FALSE);
+        return $this->get_html($files);
+        //return self::get_html($files);
     }
-    public function getHtml($files = array())
+
+    private function get_html($files = array())
     {
         $html = "";
         foreach ($files as $file)
@@ -100,4 +120,5 @@ class StaticFile
         return $html;
     }
 }
+
 ?>

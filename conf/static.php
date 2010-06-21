@@ -6,49 +6,38 @@
 
 $static = array();
 $static["index"][] = array(
-    "tag"         => "script",
-    "type"        => "text/javascript", 
-    "src"         => STATIC_URL . "min?module=core&type=js", 
+    "type"        => "css",
+    "href"        => STATIC_URL . "yui/2.8.1/reset/reset-min.css", 
+    "is_top"      => TRUE, 
+);
+$static["index"][] = array(
+    "type"        => "css", 
+    "href"        => STATIC_URL . "yui/2.8.1/fonts/fonts-min.css", 
+    "is_top"      => TRUE, 
+);
+$static["index"][] = array(
+    "type"        => "css", 
+    "href"        => STATIC_URL . "yui/2.8.1/grids/grids-min.css", 
+    "is_top"      => TRUE, 
+);
+$static["index"][] = array(
+    "type"        => "css", 
+    "href"        => STATIC_URL . "class.css", 
+    "is_top"      => TRUE, 
+);
+$static["index"][] = array(
+    "type"        => "js", 
+    "src"         => STATIC_URL . "yui/3.1.1/yui/yui-min.js", 
     "is_top"      => FALSE, 
 );
-/* 
-    output : 
-    <body>
-    ...
-    <script type="text/javascript" src="http://aaa.com/min?module=core&type=js"></script>
-    </body>
-*/
 $static["index"][] = array(
-    "tag"         => "link",
-    "type"        => "text/css",  // alias : css, js
-    "rel"         => "stylesheet",
-    "href"        => STATIC_URL . "min?module=core&type=css&nominify&nocombo", 
-    "media"       => "screen",
-    "is_top"      => TRUE, 
+    "type"        => "js", 
+    "src"         => STATIC_URL . "framework/core.js", 
+    "is_top"      => FALSE, 
 );
-/* 
-    output : 
-    <link type="text/css" rel="stylesheet" href="http://aaa.com/min?module=core&type=css" media="screen">
-    <body>
-    ...
-    </body>
-*/
 $static["index"][] = array(
-    "tag"         => "link",
-    "type"        => "text/css", 
-    "rel"         => "stylesheet",
-    "href"        => STATIC_URL . "min?module=core_nojs&type=css", 
-    "media"       => "screen",
-    "is_top"      => TRUE, 
-    "is_noscript" => TRUE,
+    "type"        => "js", 
+    "src"         => STATIC_URL . "framework/sandbox.js", 
+    "is_top"      => FALSE, 
 );
-/* 
-    output : 
-    <noscript>
-    <link type="text/css" rel="stylesheet" href="http://aaa.com/min?module=core_nojs&type=css">
-    </noscript>
-    <body>
-    ...
-    </body>
-*/
 ?>

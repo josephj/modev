@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>YUI Introduction</title>
-<?php echo $static_html["top"]; ?>
+<title><?php echo $data["title"], " | ", $data["site_name"]; ?></title>
+<?php echo (isset($static_html["top"]) ? $static_html["top"] : ""); ; ?>
 </head>
 <body class="yui-skin-sam">
+    <h1><?php echo $data["title"]; ?></h1>

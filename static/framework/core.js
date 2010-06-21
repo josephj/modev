@@ -4,16 +4,44 @@ Y.modules = [];
 
 // core : control module life cycle
 Y.add("core", function (Y) {
-    var Core = {
-        init : function () {
-            Y.log("Core init");
-            for (var i in Y.modules) {
-                if (!Y.one("#" + i)) {
-                    Y.log("#" + i + " not exists");
-                    continue;
+    var Core = function () {
+        var moduleData = {};
+        return {
+            register: function (moduleId, creator) {
+                moduleData[moduleId] = {
+                    creator : creator,
+                    instance: null
                 }
-                Y.log("Module #" + i + " is created");
-                Y.modules[i].init();
+            },
+            /**
+             * Starts the given module, calling it's init() method and optionally onviewload()
+             * @param {string} moduleId The ID of the module to start
+             * @return {void} 
+             */
+            start: function (moduleId) {
+                moduleData[moduleId].instance = moduleData[moduleId].creator(new Sandbox(this));
+                moduleData[moduleId].instance.init();
+            },
+            stop: function (moduleId) {
+                var data = moduleData[moduleId];
+                if (data.instance) {
+                    data.instance.destroy();
+                    data.instance = null;
+                }
+            },
+            startAll: function () {
+                for (var moduleId in moduleData) {
+                    if (moduleData.hasOwnProperty(moduleId)) {
+                        this.start(moduleId);
+                    }
+                }
+            },
+            stopAll: function () {
+                for (var moduleId in moduleData) {
+                    if (moduleData.hasOwnProperty(moduleId)) {
+                        this.stop(moduleId);
+                    }
+                }
             }
         }
     };
