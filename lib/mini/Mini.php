@@ -52,11 +52,11 @@ class Mini
         $dom->ownerDocument->xinclude();
         foreach ($this->config_xml->xpath("path[@type='css']") as $path)
         {
-            $this->css_paths[] = preg_replace_callback("/\$([A-Z][0-9A-Z_]*)/", array($this, "resolve"), $path); 
+            $this->css_paths[] = preg_replace_callback('/\$([A-Z][0-9A-Z_]*)/', array($this, "resolve"), $path); 
         }        
         foreach ($this->config_xml->xpath("path[@type='js']") as $path)
         {
-            $this->js_paths[] = preg_replace_callback("/\$([A-Z][0-9A-Z_]*)/", array($this, "resolve"), $path); 
+            $this->js_paths[] = preg_replace_callback('/\$([A-Z][0-9A-Z_]*)/', array($this, "resolve"), $path); 
         }        
     }
 
@@ -208,7 +208,7 @@ class MiniModule
         foreach ($files as $file)
         {
             // concatenated file
-            fwrite($handle, file_get_contents($file["src"]));
+            fwrite($handle, file_get_contents($file));
         }
         fclose($handle);
         $output = "";
