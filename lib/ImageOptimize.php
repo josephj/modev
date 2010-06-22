@@ -18,7 +18,7 @@ class ImageOptimize {
 
     public function is_optimized()
     {
-        if (count($this->report["not_optimized_items"])
+        if (count($this->report["not_optimized_items"]))
         {
             return FALSE;
         }
@@ -87,7 +87,7 @@ class ImageOptimize {
         foreach ($files as $file)
         {
             // Identify the image format
-            exec("identify -format \"%m\" $src_file", $return, $error);
+            exec("/usr/bin/identify -format \"%m\" $src_file", $return, $error);
             $filetype = ($error === 0) ? mb_strtolower($return[0]) : "";
             if ($error == 1) 
             {
@@ -109,27 +109,27 @@ class ImageOptimize {
                 case "jpg":
                 case "jpeg":
                     $dest_file .= ".jpg";
-                    $cmd = "/usr/local/bin/jpegtran -copy none -optimize $src_file > $dest_file";
+                    $cmd = "/usr/bin/jpegtran -copy none -progressive -optimize $src_file > $dest_file";
                     exec($cmd, $return, $error);
                 break;
                 case "gif":
                 case "bmp": 
                     $dest_file .= ".png";
-                    $cmd = "/usr/local/bin/convert $src_file $dest_file";
+                    $cmd = "/usr/bin/convert $src_file $dest_file";
                     exec($cmd, $return, $error);
-                    $cmd = "/usr/local/bin/pngcrush -rem alla -reduce $dest_file {$dest_file}.png";
+                    $cmd = "/usr/bin/pngcrush -rem alla -reduce $dest_file {$dest_file}.png";
                     exec($cmd, $return, $error);
                     exec("rm -f $dest_file", $var);
                     exec("mv {$dest_file}.png {$dest_file}", $var);
                 break;
                 case "gifgif":
                     $dest_file .= ".gif";
-                    $cmd = "/usr/local/bin/gifsicle -O2 $src_file > $dest_file";
+                    $cmd = "/usr/bin/gifsicle -O2 $src_file > $dest_file";
                     exec($cmd, $return, $error);
                 break;
                 case "png":
                     $dest_file .= ".png";
-                    $cmd = "/usr/local/bin/pngcrush -rem alla -reduce $src_file $dest_file";
+                    $cmd = "/usr/bin/pngcrush -rem alla -reduce $src_file $dest_file";
                     exec($cmd, $return, $error);
                 break;
                 default:
