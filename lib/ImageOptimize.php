@@ -133,6 +133,7 @@ class ImageOptimize {
                     exec($cmd, $return, $error);
                 break;
                 default:
+                    continue;
             }
 
             // check whether the image is being optimized
