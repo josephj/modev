@@ -8,7 +8,7 @@
         <file type="css" src="yui/2.8.1/reset/reset.css" />
         <file type="css" src="yui/2.8.1/fonts/fonts.css" />
         <file type="css" src="yui/2.8.1/grids/grids.css" />
-        <file type="js"  src="yui/3.1.1/yui.js" />
+        <file type="js"  src="yui/3.1.1/yui/yui.js" />
     </module>
 
     <module id="index">
@@ -26,7 +26,6 @@
         <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/menu/menu.js" />
         <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/element/element-beta.js" />
         <file type="js"  src="http://yui.yahooapis.com/2.6.0/build/button/button.js" />
-        <file type="js"  src="class.js" />
     </module>
 
 </mini>

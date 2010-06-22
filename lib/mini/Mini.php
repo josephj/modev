@@ -11,7 +11,7 @@ class Mini
 
     public function __construct($config_file = "mini.xml")
     {
-        $this->config_file = self::find($config_file, $this->configPaths);
+        $this->config_file = self::find($config_file);
         $this->load();
     }
 
@@ -33,16 +33,17 @@ class Mini
                 return $file_path;
             }
         }
+        throw new FileNotFoundException("File not found: " . $file_name);
     }
 
     public function find_css_file($file_name)
     {
-        return self::find($file_name, $this->css_paths);
+        return (strpos($file_name, "http://") === 0) ? $file_name : self::find($file_name, $this->css_paths);
     }
 
     public function find_js_file($file_name)
     {
-        return self::find($file_name, $this->js_paths);
+        return (strpos($file_name, "http://") === 0) ? $file_name : self::find($file_name, $this->js_paths);
     }
 
     private function load()
@@ -131,28 +132,27 @@ class MiniModule
     {
         $this->mini  = $mini;
         $this->id    = $module_xml["id"];
-        $css_files   = array();
-        $js_files    = array();
+        $files       = array();
         // get css file list
         foreach ($module_xml->xpath("file[@type='css']") as $file)
         {
             $src = $this->mini->find_css_file($file["src"]);
-            if (isset($css_files[$src]))
+            if (in_array($src, $files))
             {
                 continue;
             }
-            $css_files[$src] = true;
+            $files[] = $src;
             $this->css_files[] = $src;
         }
         // get javascript file list
         foreach ($module_xml->xpath("file[@type='js']") as $file)
         {
             $src = $this->mini->find_js_file($file["src"]);
-            if (isset($js_files[$src]))
+            if (in_array($src, $files))
             {
                 continue;
             }
-            $js_files[$src] = true;
+            $files[] = $src;
             $this->js_files[] = $src;
         }
     }
@@ -161,8 +161,7 @@ class MiniModule
     {
         $css_file = $this->build_css($target_path, $is_minify);
         $js_file  = $this->build_js($target_path, $is_minify);
-        if ( ! is_null($css_file) && ! is_null($js_file))
-        {
+        if ( ! is_null($css_file) && ! is_null($js_file)) {
             return array($css_file, $js_file);
         }
         else if ( ! is_null($css_file))
@@ -207,8 +206,24 @@ class MiniModule
         $handle = fopen($tmp_file, "w+");
         foreach ($files as $file)
         {
-            // concatenated file
-            fwrite($handle, file_get_contents($file));
+            if (strpos($file, "http://") === 0)
+            {
+                $ch = curl_init(file);
+                curl_setopt($ch, CURLOPT_URL, "file");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+                curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-TW; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11");
+                $content = curl_exec($ch);
+                if ($result === FALSE) 
+                {
+                    throw new FileNotFoundException("File not found: " . $file);
+                }
+            }
+            else 
+            {
+                $content = file_get_contents($file);
+            }
+            fwrite($handle, $content);
         }
         fclose($handle);
         $output = "";

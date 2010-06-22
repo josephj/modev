@@ -1,5 +1,5 @@
 <?php
-define("MINI_CONFIG", isset($_GET["conf"]) ? $_GET["conf"] : getenv("DEV_ROOT") . "conf/mini/mini.xml");
+define("MINI_CONFIG", isset($_GET["conf"]) ? $_GET["conf"] : getenv("DEV_ROOT") . "/conf/mini/mini.xml");
 
 set_exception_handler("handleException");
 
