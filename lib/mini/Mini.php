@@ -17,6 +17,8 @@ class Mini
 
     /**
      * Search for the specific file
+     * @param string file_name File name only or absolute file path. If only file name provided, will check each path provided.
+     * @param array path search path
      */
     public static function find($file_name, $paths = array("."))
     {
