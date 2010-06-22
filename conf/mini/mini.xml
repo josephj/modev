@@ -12,7 +12,7 @@
     </module>
 
     <module id="index">
-        <require module="yui">
+        <require module="yui" />
         <file type="css" src="http://yui.yahooapis.com/2.6.0/build/menu/assets/skins/sam/menu.css" /> 
         <file type="css" src="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" /> 
         <file type="css" src="http://yui.yahooapis.com/2.6.0/build/container/assets/skins/sam/container.css" /> 

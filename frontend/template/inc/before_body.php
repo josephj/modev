@@ -6,4 +6,4 @@
 <?php echo (isset($static_html["top"]) ? $static_html["top"] : ""); ; ?>
 </head>
 <body class="yui-skin-sam">
-    <h1><?php echo $data["title"]; ?></h1>
+<h1><?php echo $data["title"]; ?></h1>

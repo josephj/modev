@@ -1,5 +1,5 @@
 <?php
-define("CONFIG_PATH", "/var/www/josephj/lab/modev/conf/");
+define("CONFIG_PATH", "/var/www/josephj/lab/modev/conf/php/");
 
 // model
 require_once CONFIG_PATH  . "constant.php";

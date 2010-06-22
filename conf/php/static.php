@@ -7,17 +7,17 @@
 $static = array();
 $static["index"][] = array(
     "type"        => "css",
-    "href"        => STATIC_URL . "yui/2.8.1/reset/reset-min.css", 
+    "href"        => STATIC_URL . "yui/3.1.1/cssreset/reset.css", 
     "is_top"      => TRUE, 
 );
 $static["index"][] = array(
     "type"        => "css", 
-    "href"        => STATIC_URL . "yui/2.8.1/fonts/fonts-min.css", 
+    "href"        => STATIC_URL . "yui/3.1.1/cssfonts/fonts.css", 
     "is_top"      => TRUE, 
 );
 $static["index"][] = array(
     "type"        => "css", 
-    "href"        => STATIC_URL . "yui/2.8.1/grids/grids-min.css", 
+    "href"        => STATIC_URL . "yui/3.1.1/cssgrids/grids.css", 
     "is_top"      => TRUE, 
 );
 $static["index"][] = array(
