@@ -97,7 +97,8 @@ class OptimizeImage {
         if (is_dir($path))
         {
             $handle = opendir($path);
-            while ($file = readdir($handle)) 
+            // Get file path recursively
+            while (FALSE !== ($file = readdir($handle))) 
             {
                 if (is_dir($file))
                 {
@@ -109,6 +110,7 @@ class OptimizeImage {
                 }
                 $files[] = $file;
             }
+            closedir($handle);
         }
         else
         {
@@ -143,7 +145,7 @@ class OptimizeImage {
             $return       = "";
             $error        = "";
             $src_filename = pathinfo($src_file);
-            $src_filename = $src_filename["basename"];
+            $src_filename = str_replace("." . $src_filename["extension"], "", $src_filename["basename"]);
             $dest_file = "{$tmp_path}/{$src_filename}";
             switch ($src_filetype) 
             {
@@ -155,25 +157,20 @@ class OptimizeImage {
                 break;
                 case "gif":
                 case "bmp": 
-                    // transform first
+                    // convert first
+                    $raw_file = $dest_file . "-raw.png";
                     $dest_file .= ".png";
-                    $cmd = "/usr/bin/convert $src_file $dest_file";
-                    // remove crush
-                    $src_file = $dest_file;
-                    $dest_file .= ".png";
-                    exec($cmd, $return, $error);
-                    $cmd = "/usr/bin/pngcrush -rem alla -reduce $src_file $dest_file";
-                    // change to png8 if necessary
+                    $cmd = "/usr/bin/convert $src_file $raw_file";
+                    exec($cmd);
                     if ($this->options["use_png8"])
                     {
-                        $src_file = $dest_file;
-                        $dest_file .= ".png";
-                        $cmd = "/usr/bin/convert $src_file PNG8:$dest_file";
-                        exec($cmd, $return, $error);
+                        $this->savePng8($raw_file, $dest_file);
                     }
-                    exec($cmd, $return, $error);
-                    exec("rm -f $dest_file", $var);
-                    exec("mv {$dest_file}.png {$dest_file}", $var);
+                    else 
+                    {
+                        exec("/usr/bin/pngcrush -rem alla -brute -reduce $raw_file $dest_file");
+                    }
+                    exec("rm -f $raw_file");
                 break;
                 case "gifgif":
                     $dest_file .= ".gif";
@@ -181,13 +178,14 @@ class OptimizeImage {
                     exec($cmd, $return, $error);
                 break;
                 case "png":
-                    $cmd = "/usr/bin/pngcrush -rem alla -brute -reduce $src_file $dest_file";
-                    exec($cmd, $return, $error);
                     if ($this->options["use_png8"])
                     {
-                        $cmd = "/usr/bin/convert $dest_file PNG8:$dest_file";
+                        $this->savePng8($src_file, $dest_file);
+                    }
+                    else 
+                    {
+                        $cmd = "/usr/bin/pngcrush -rem alla -brute -reduce $src_file $dest_file";
                         exec($cmd, $return, $error);
-                        $dest_file .= ".png";
                     }
                 break;
                 default:
@@ -216,6 +214,36 @@ class OptimizeImage {
                 $this->report["not_optimized"][] = $info;
             }
         }
+    }
+
+    private function savePng8($src_file, $dest_file)
+    {
+        if (self::get_type($src_file) !== "png")
+        {
+            return FALSE;
+        }
+        $src_filename = pathinfo($src_file);
+        $src_filename = str_replace("." . $src_filename["extension"], "", $src_filename["basename"]);
+
+        // pngquant : quantise image into 256 colors (overwrite file)
+        $cmd = "/usr/bin/pngquant 256 $src_file";
+        $quant_file = str_replace(".png", "-fs8.png", $src_file);
+        exec($cmd);
+        exec("mv $quant_file {$this->tmp_path}/{$src_filename}-quant.png");
+        $quant_file = "{$this->tmp_path}/{$src_filename}-quant.png";
+
+        // pngout : convert image from png24 to png8
+        $out_file = str_replace("-quant.png", "-out.png", $quant_file);
+        $cmd = "/usr/bin/pngout -c3 -d8 -y -force $quant_file $out_file";
+        exec($cmd);
+        exec("rm -f $quant_file");
+
+        // pngcrush : compress image
+        $cmd = "/usr/bin/pngcrush -bit_depth 8 -brute -rem alla -reduce $out_file $dest_file";
+        exec($cmd);
+        exec("rm -f $out_file");
+
+        return TRUE;
     }
 }
 class OptimizeImageException extends Exception {};

@@ -60,7 +60,7 @@ case ($check_only) :
     echo $optimizer->is_optimized() . "\n";
     break;
 case ($report_only) :
-    echo_report($report());
+    echo_report($report);
     break;
 default :
     $optimizer->optimize();
