@@ -5,5 +5,5 @@
 <title><?php echo $data["title"], " | ", $data["site_name"]; ?></title>
 <?php echo (isset($static_html["top"]) ? $static_html["top"] : ""); ; ?>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1><?php echo $data["title"]; ?></h1>

@@ -1,0 +1,12 @@
+#masthead {
+    margin: 10px 0;
+}
+#masthead .bd .title {
+    font-family: Georgia;
+    font-size: 197%;
+    font-weight: bold;
+    float: left;
+}
+#masthead .bd img {
+    float: right;
+}

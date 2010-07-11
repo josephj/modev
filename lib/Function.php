@@ -709,4 +709,5 @@
 
         return $page_html;
     };
+
 ?>

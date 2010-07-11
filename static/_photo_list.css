@@ -1,0 +1,30 @@
+#photo-list {
+    margin-bottom:10px;
+}
+#photo-list .hd {
+    margin-bottom:10px;
+}
+#photo-list h2 {
+    font-weight:bold;
+    font-size:123.1%;
+    float:left;
+}
+#photo-list span {
+    float:right;
+}
+#photo-list .bd .empty {
+    color:#000;
+    font-size:93%;
+    letter-spacing:1px;
+    padding:100px 0;
+    text-align:center;
+    border:solid 1px #ccc;
+}
+#photo-list .bd ul {
+    margin:0 25px;
+}
+#photo-list .bd ul li {
+    float:left;
+    margin-right:5px;
+    margin-bottom:5px;
+}

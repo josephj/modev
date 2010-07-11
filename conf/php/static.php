@@ -49,6 +49,6 @@ $static["index"][] = array(
 $static["index"][] = array(
     "type"        => "js",
     "src"         => STATIC_URL . "mini?module=index&type=js",
-    "is_top"      => FALSE,
+    "is_top"      => TRUE,
 );
 ?>
