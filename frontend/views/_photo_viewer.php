@@ -6,10 +6,6 @@
         </div>
     </div>
     <div class="bd">
-            xxxx
-    </div>
-    <div class="ft">
-
     </div>
 </div>
 <!-- #photo-viewer (end) -->

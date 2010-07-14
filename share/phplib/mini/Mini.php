@@ -201,7 +201,14 @@ class MiniModule
         }
     }
 
-    public function compress($type, $is_minify = TRUE)
+    public function get_target_file($type, $outpath = ".")
+    {
+        $filename = rtrim($outpath, '/') . '/';
+        $filename .= "min_" . $this->id . "." . $type;
+        return $filename;
+    }
+
+    public function compress($type, $outfile, $is_minify = TRUE)
     {
         $files = ($type === "css") ? $this->css_files : $this->js_files;
         $tmp_file = tempnam("/tmp/", "mini_");
@@ -239,17 +246,31 @@ class MiniModule
         }
         $this->file_size[$type] = filesize($tmp_file);
         unlink($tmp_file);
+        if ($outfile) {
+            // Delete the output file if it already exists.
+            if (file_exists($outfile)) {
+                unlink($outfile);
+            }
+
+            file_put_contents($outfile, $output);
+
+            if (!defined('FUSE_QUIET')) {
+                echo $outfile."\n";
+            }
+
+            return $outfile;
+        }
         return $output;
     }
 
     public function echo_css($is_minify = TRUE)
     {
-        echo $this->compress("css", $is_minify);
+        echo $this->compress("css", null, $is_minify);
     }
 
     public function echo_js($is_minify = TRUE)
     {
-        echo $this->compress("js", $is_minify);
+        echo $this->compress("js", null, $is_minify);
     }
     
 }

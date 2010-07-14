@@ -44,7 +44,7 @@ class StaticFile {
         {
             $file["is_top"] = isset($file["is_top"]) ? $file["is_top"] : TRUE;
             $file["is_noscript"] = isset($file["is_noscript"]) ? $file["is_noscript"] : FALSE;
-            if ($file["is_top"] !== $is_top)
+            if ($file["is_top"] != $is_top)
             {
                 continue;
             }

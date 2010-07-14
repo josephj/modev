@@ -1,0 +1,174 @@
+#!/usr/bin/php
+<?php 
+// constants
+define("FUSE_QUIET",     "true");               // hide mini message
+define("STATIC_CONFIG",  "static.php");  // file name of static configuration
+define("STATIC_URL",     "http://img.modev.josephj.com/");  // file name of static configuration
+define("CODE_NAME",      "modev");            // project name : muchiii
+define("DEV_ROOT_BASE",  "/var/www/josephj/lab/");         // where all engineers' code exists
+
+// user options
+// ./create.php index development /tmp/pkg
+$app       = (isset($argv[1])) ? $argv[1] : "";
+$env       = (isset($argv[2])) ? $argv[2] : "";
+$work_path = (isset($argv[3])) ? $argv[3] : "";
+
+if ($app === "" || $env === "" || $work_path === "")
+{
+    echo "Syntax : pkg_create [module] [environment] ([generate_path])\n";
+    echo "Sample 1: pkg_create index production /var/www/josephj/lab/modev/pkg/\n";
+    exit;
+}
+
+// hosts for dynamically replace
+$hosts["development"] = array(
+    "josephj.com:50010",
+    "josephj.com:50019",
+    "/var/www/josephj/lab/modev/frontend/",
+    "/var/www/josephj/lab/modev/static/",
+    "/var/www/josephj/lab/modev/share/phplib/",
+    "/var/www/josephj/lab/modev/conf/php/",
+);
+$hosts["production"] = array(
+    "modev.josephj.com", 
+    "img.modev.josephj.com",
+    "/var/www/modev/frontend/",
+    "/var/www/modev/static/",
+    "/var/www/modev/share/phplib/",
+    "/var/www/modev/conf/php/",
+);
+// exclude file patterns
+$excludes = array("*.swp", ".git", ".svn", ".gitignore", "yui", "apache", "mini");
+
+// get user name
+$username = getenv("USER");
+
+// create working and copy directory
+$pkg_name            = "{$env}_" . str_replace("_", "", $username) . "_" . date("YmdHi")  . "/";
+$work_path           = $work_path . $pkg_name . "copy/";
+$package_path        = str_replace("copy/", "pkg/", $work_path);         // where the generated tar package will be
+$conf_path           = DEV_ROOT_BASE . CODE_NAME . "/conf/";         // where is your appliction
+$share_path          = DEV_ROOT_BASE . CODE_NAME . "/share/";         // where is your appliction
+$app_path            = DEV_ROOT_BASE . CODE_NAME . "/frontend/";         // where is your appliction
+$static_path         = DEV_ROOT_BASE . CODE_NAME . "/static/";           // where is the static folder
+$_SERVER["DEV_ROOT"] = DEV_ROOT_BASE . CODE_NAME . "/";                  // server variable for mini
+$mini_config         = DEV_ROOT_BASE . CODE_NAME . "/conf/mini/mini.xml";// use self own's mini config
+
+// libraries
+require_once $_SERVER["DEV_ROOT"] . "share/phplib/StaticFile.php";  // mini class
+require_once $_SERVER["DEV_ROOT"] . "share/phplib/mini/Mini.php";  // mini class
+require_once $_SERVER["DEV_ROOT"] . "share/pear/File/SearchReplace.php"; // batchly find and replace file content
+
+// create working directory
+echo "\n";
+echo "Create working directory...";
+exec("mkdir -p $work_path");
+exec("mkdir -p $package_path");
+exec("cp -R $app_path $work_path/.");
+exec("cp -R $static_path $work_path/.");
+exec("cp -R $conf_path $work_path/.");
+exec("cp -R $share_path $work_path/.");
+echo "(done)\n";
+
+// Minify CSS & JavaScript
+echo "Minify CSS & JavaScript file...";
+$mini   = new Mini($mini_config);
+require_once $_SERVER["DEV_ROOT"] . "conf/php/" . STATIC_CONFIG;
+foreach ($static as $module=>$files) 
+{
+    foreach ($files as $k=>$attrs) 
+    {
+        switch ($attrs["type"]) 
+        {
+            case "javascript":
+            case "text/javascript":
+            case "js":
+                if (stripos($attrs["src"], "mini") === FALSE)
+                {
+                    continue;    
+                }
+                preg_match("/module=([^&]+)/", $attrs["src"], $matches); 
+                $module_name = $matches[1];
+                $module = $mini->get_module($module_name);
+                $file = $module->build_js($work_path . "static/");
+                $stamp = md5_file($file);
+                $file2 = str_replace('.js', "_{$stamp}.js", $file);
+                exec("mv $file $file2");
+                $static[$module_name][$k]["src"] = STATIC_URL . str_replace($work_path . "static/", "", $file2);
+            break;
+            default :
+                if (stripos($attrs["href"], "mini") === FALSE)
+                {
+                    continue;    
+                }
+                preg_match("/module=([^&]+)/", $attrs["href"], $matches); 
+                $module_name = $matches[1];
+                $module = $mini->get_module($module_name);
+                $file = $module->build_css($work_path . "static/");
+                $stamp = md5_file($file);
+                $file2 = str_replace('.css', "_{$stamp}.css", $file);
+                exec("mv $file $file2");
+                $static[$module_name][$k]["href"] = STATIC_URL . str_replace($work_path . "static/", "", $file2);
+        }
+    }
+}
+echo "(done)\n";
+// Change Configuration
+echo "Update static configuration...";
+$output = "<?php\n";
+$output .= "\$static = array(\n";
+foreach ($static as $k => $v) 
+{
+    $output .= "    \"$k\" => array(\n"; 
+    foreach ($v as $i => $f)
+    {
+        $output .= "        array(\n"; 
+        foreach ($f as $ak => $av)
+        {
+            $output .= "            \"$ak\" => \"$av\",\n"; 
+        }
+        $output .= "        ),\n";
+    }
+    $output .= "    ),\n";
+}
+$output .= ");\n";
+$output .= "?>";
+file_put_contents($work_path . "conf/php/" . STATIC_CONFIG, $output);
+echo "(done)\n";
+
+// Modify URLs in static and configuration files
+echo "Modify URLs in static and configuration directories...";
+$files = array();
+$snr = new File_SearchReplace('/\w+\.log\([^;]+\);/', "", array(), $work_path . "static/", true);
+$snr->setSearchFunction("preg");
+$snr->doSearch();
+$snr = new File_SearchReplace($hosts["development"], $hosts[$env], array(), $work_path, true);
+$snr->setSearchFunction("normal");
+$snr->doSearch();
+echo "(done)\n";
+
+// Packaging 
+echo "Packing necessary files...";
+$str = "";
+foreach ($excludes as $exclude)
+{
+    $str .= "--exclude=$exclude ";
+}
+chdir($work_path);
+exec("tar cvzf {$package_path}$app.tar.gz $str .");
+exec("tar cvzf {$package_path}static.tar.gz $str static");
+echo "(done)\n\n";
+echo "Packages are generated under \"$package_path\" directory\n";
+echo "You can use the following command to install packages: \n";
+echo "==========\n";
+switch ($env) 
+{
+    case "production" :
+        echo "pkg_deploy {$package_path}$app.tar.gz modev.josephj.com:443;";
+        echo "pkg_deploy {$package_path}static.tar.gz img.modev.josephj.com:443;\n";
+        break;
+}
+echo "==========\n";
+echo "\n";
+
+?>

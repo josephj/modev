@@ -5,7 +5,7 @@
             <h3>Flickr Photo List</h3>
         </div>
     </div>
-    <div class="bd">
+    <div class="bd loading">
         <ul>
 <?php foreach ($photos as $photo) : ?>
             <li>

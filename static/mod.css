@@ -22,7 +22,7 @@
     zoom: 1;
     margin-bottom: 10px;
 }
-.mod-content .bd .profile: after {
+.mod-content .bd .profile:after {
     clear: both;
     content: '';
     display: block;
@@ -50,14 +50,24 @@
     font-size: 123.1%;
 }
 .mod-side {
-    border: solid 1px #b5cbd6;
-    margin-bottom: 10px;
-    -moz-border-radius: 5px;
+    behavior: url(/static/ie-css3/ie-css3.htc);
+    background: #e8f3f5;
+    padding-bottom: 1px;
+    position: relative;
+    border-radius: 5px;
+    -moz-border-radius:0 0 5px 5px;
+    -webkit-border-radius:0 0 5px 5px;
+    *margin-bottom: 10px;
 }
 .mod-side .hd .title {
+    behavior: url(/static/ie-css3/ie-css3.htc);
+    border-radius: 5px 5px 0 0;
+    background: #82cdd3;
     zoom: 1;
+    -moz-border-radius: 5px 5px 0 0;
+    -webkit-border-radius: 5px 5px 0 0;
 }
-.mod-side .hd .title: after {
+.mod-side .hd .title:after {
     clear: both;
     content: '';
     display: block;
@@ -65,24 +75,28 @@
     visibility: hidden;
 }
 .mod-side .hd .title h3 {
-    background: #639ace;
     color: #fff;
-    font-size: 93%;
     font-weight: bold;
-    font-family: Verdana;
-    text-align: center;
+    font-size: 123.1%;
     margin: 5px;
     padding: 8px 5px 5px;
     _padding: 7px 5px 5px;
-    -moz-border-radius: 5px;
 }
 .mod-side .hd .title h3 * {
     vertical-align: bottom;
 }
 .mod-side .bd {
+    background: #fff;
+    behavior: url(/static/ie-css3/ie-css3.htc);
+    border-radius: 5px;
     line-height: 1.5;
-    padding: 5px 0 10px 8px;
+    margin: 0 5px 5px;
+    padding: 10px 0; 
+    position: relative;
     text-align: center;
+    zoom: 1;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 .mod-side .ft {
     background: #efefef;
@@ -99,7 +113,7 @@
     text-align: center;
     zoom: 1;
 }
-.mod-grid .bd .row: after {
+.mod-grid .bd .row:after {
     clear: both;
     content: '';
     display: block;
@@ -138,8 +152,8 @@
     float: left;
     overflow: hidden;
 }
-.mod-img-list .bd ol: after,
-.mod-img-list .bd ul: after {
+.mod-img-list .bd ol:after,
+.mod-img-list .bd ul:after {
     clear: both;
     content: '';
     display: block;
@@ -150,7 +164,7 @@
 .mod-img-txt-list .bd li .item {
     zoom: 1;
 }
-.mod-img-txt-list .bd li .item: after {
+.mod-img-txt-list .bd li .item:after {
     clear: both;
     content: '';
     display: block;
@@ -187,17 +201,22 @@
 }
 .mod-main {
     margin-bottom: 10px;
-    position: relative;
     zoom: 1;
 }
 .mod-main .hd {  
+    background: #f0845d;
+    behavior: url(/static/ie-css3/ie-css3.htc);
+    border-radius: 5px;
     margin-bottom: 10px;
+    position: relative;
+    zoom: 1;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 .mod-main .hd .title {
-    border-bottom: solid 3px #18a6e7;
     zoom: 1;
 }
-.mod-main .hd .title: after {
+.mod-main .hd .title:after {
     clear: both;
     content: '';
     display: block;
@@ -206,12 +225,11 @@
 }
 .mod-main .hd .title h2 {
     background: url(bg_title.gif) left center no-repeat;
-    color: #666;
+    color: #fff;
     float: left;
     font-size: 123.1%;
     font-weight: bold;
-    padding-left: 12px;
-    margin-bottom: 2px;
+    padding: 7px 10px 5px;
 }
 .mod-main .hd .title .utility {
     float: right;

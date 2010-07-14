@@ -28,6 +28,7 @@ Y.Core.register("photo-filter", function() {
          */
         _formSubmitHandler: function (e) {
             e.preventDefault();
+            this.api.broadcast("photo-filter-submit");
             this._makeRequest();    
         },
         _makeRequest: function () {

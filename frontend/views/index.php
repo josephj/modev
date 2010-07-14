@@ -10,6 +10,7 @@
 <div class="yui3-main">
 <div class="yui3-b">
 <?php include_once VIEW_PATH . "_photo_viewer.php"; ?>
+<?php include_once VIEW_PATH . "_introduction.php"; ?>
 </div><!-- .yui3-b (end) -->
 </div><!-- .yui3-main (end) -->
 <div class="yui3-b">

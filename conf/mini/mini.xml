@@ -25,7 +25,6 @@
         <file type="js" src="yui/3.1.1/event-simulate/event-simulate.js" />
         <file type="js" src="yui/3.1.1/node/node-event-simulate.js" />
         <file type="js" src="yui/3.1.1/node-focusmanager/node-focusmanager.js" />
-        <file type="js" src="yui/3.1.1/node-menunav/node-menunav.js" />
         <file type="js" src="yui/3.1.1/substitute/substitute.js" />
         <file type="js"  src="core.js" /> 
     </module>
@@ -35,12 +34,11 @@
         <require module="framework" />
         <file type="css" src="core.css" /> 
         <file type="css" src="mod.css" /> 
-        <file type="css" src="yui/3.1.1/node-menunav/assets/skins/sam/node-menunav.css" />
         <file type="css" src="_masthead.css" /> 
         <file type="css" src="_photo_list.css" /> 
         <file type="css" src="_photo_filter.css" /> 
         <file type="css" src="_photo_viewer.css" /> 
-        <file type="js"  src="_navigation.js" /> 
+        <file type="css" src="_introduction.css" /> 
         <file type="js"  src="_photo_viewer.js" /> 
         <file type="js"  src="_photo_filter.js" /> 
         <file type="js"  src="_photo_list.js" /> 

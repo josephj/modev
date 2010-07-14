@@ -1,8 +1,10 @@
 Y.Core.register("photo-list", {
     api: null,
     node: null,
+    previousImg: null,
     init: function (api) {
         // 注册要听取的事件
+        api.listen("photo-filter-submit");
         api.listen("photo-filter-response");
         // 将 api 介面提升至全域
         this.api = api;
@@ -13,19 +15,32 @@ Y.Core.register("photo-list", {
             api  = this.api;
         // 绑定照片点选 click 事件
         Y.delegate("click", function (e) {
+            if (this.previousImg) {
+                this.previousImg.removeClass("selected");
+            }
+            this.previousImg = e.currentTarget;
+            this.previousImg.addClass("selected");
             e.preventDefault();
             Y.log("photoClickHandler()", "info", "#photo-list");
-            api.broadcast("photo-list-click", e.currentTarget.get("src"));
-        }, node, "img");
+            api.broadcast("photo-list-click", this.previousImg.get("src"));
+            window.scrollTo(0, 0);
+        }, node, "img", this);
         // 将 module 节点提升至全域
         this.node = node;
-        this.api.broadcast("photo-list-rendered", node.one("img").get("src"));
+        this.previousImg = node.one("img");
+        this.previousImg.addClass("selected");
+        this.api.broadcast("photo-list-rendered", this.previousImg.get("src"));
     },
     onmessage: function (eventType, callerName, data) {
         Y.log(arguments.callee.name + " : " + eventType, "info", "#photo-list"); 
         switch (eventType) {
             case "photo-filter-response" : 
                 this._updateUI(data);
+                this.node.one(".bd").removeClass("loading");
+            break;
+            case "photo-filter-submit" :
+                this.node.one(".bd").set("innerHTML", "");
+                this.node.one(".bd").addClass("loading");
             break;
         }        
     },
@@ -52,8 +67,9 @@ Y.Core.register("photo-list", {
             html.push("<li><a href=\"" + link + "\" title=\"" + items[i].title + "\"><img src=\"" + img + "\"></a></li>");    
         }
         html.push("</ul>");
-        Y.log(html.join(""));
         bodyNode.set("innerHTML", html.join(""));
-        this.api.broadcast("photo-list-rendered", node.one("img").get("src"));
+        this.previousImg = node.one("img");
+        this.previousImg.addClass("selected");
+        this.api.broadcast("photo-list-rendered", this.previousImg.get("src"));
     }
 });

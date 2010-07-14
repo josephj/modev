@@ -7,9 +7,11 @@
     </div>
     <div class="bd">
         <form>
-            <label>Search: </label>
-            <input type="text" name="keyword" value="webrebuild" class="keyword">
-            <input type="submit" value="Find Photos">
+            <div class="row">
+                <label>Search: </label>
+                <input type="text" name="keyword" value="" class="keyword">
+            </div>
+            <input type="submit" value="Find Photos" class="mui-button">
         </form>
     </div>
 </div>

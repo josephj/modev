@@ -2,11 +2,18 @@
     margin: 10px 0;
 }
 #masthead .bd .title {
-    font-family: Georgia;
-    font-size: 197%;
+    color: #333;
+    font-family: Graublau Sans Web, Lucida Grande, sans-serif;
     font-weight: bold;
+    font-size: 197%;
     float: left;
 }
-#masthead .bd img {
-    float: right;
+#masthead .bd .title img {
+    margin-right: 10px;
+}
+#masthead .bd .title * {
+    vertical-align: middle;
+}
+#masthead .bd .extra {
+    float: right; 
 }

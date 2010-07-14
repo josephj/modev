@@ -1,0 +1,54 @@
+#!/usr/bin/php
+<?php 
+// constants
+define("DOCUMENT_ROOT",  "/var/www/modev/"); 
+
+// user options
+$pkg_path = (isset($argv[1])) ? $argv[1] : "";
+$hosts    = (isset($argv[2])) ? $argv[2] : "";
+
+// check
+if ($pkg_path === "" || $hosts === "")
+{
+    echo "Syntax : pkg_deploy [package_path] [hosts]\n";
+    echo "You must provide package path and host list.\n";
+    exit;
+}
+if (!is_file($pkg_path))
+{
+    echo "The package path you provide not exists.\n";
+    echo "\n";
+    exit;
+}
+
+$hosts = explode(",", $hosts);
+foreach ($hosts as $host) 
+{
+    $username = "";
+    if (strpos($host, "@") !== FALSE)
+    {
+        $parts = explode("@", $host);
+        $username = $parts[0] . "@";
+        $host     = $parts[1];
+    }
+    $port = "22";
+    if (strpos($host, ":") !== FALSE)
+    {
+        $parts = explode(":", $host);
+        $port  = $parts[1];
+        $host  = $parts[0];
+    }
+    echo "scp -P $port $pkg_path {$username}{$host}:~/.\n";
+    passthru("scp -P $port $pkg_path {$username}{$host}:~/.");
+    $file = basename($pkg_path);
+    $folder = basename($pkg_path, ".tar.gz") . "/";
+    $cmd = "sudo mkdir -p " . DOCUMENT_ROOT . ";";
+    $cmd.= "cd " . DOCUMENT_ROOT . ";";
+    $cmd.= "sudo -u root rm -rf $folder;";
+    $cmd.= "sudo -u root tar xzf ~/$file;";
+    $cmd.= "rm ~/$file;";
+    $cmd = "ssh -p $port -t {$username}{$host} \"$cmd\"";
+    passthru($cmd);
+    echo "(done)\n";
+}
+?>
