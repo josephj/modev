@@ -238,7 +238,7 @@ class MiniModule
         $output = "";
         if ($is_minify)
         {
-            $output = shell_exec("yuicompressor --type " . escapeshellarg($type) . " " . escapeshellarg($tmp_file));
+            $output = shell_exec("yuicompressor --charset utf-8 --preserve-semi --type " . escapeshellarg($type) . " " . escapeshellarg($tmp_file));
         }
         else 
         {
