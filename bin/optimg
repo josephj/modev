@@ -10,7 +10,7 @@
 
 set_exception_handler("handle_exception");
 
-require_once "../lib/optimg/OptimizeImage.php";
+require_once "../share/phplib/optimg/OptimizeImage.php";
 
 // Parse command line options.
 $check_only = FALSE;

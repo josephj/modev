@@ -97,7 +97,7 @@ class OptimizeImage {
         if (is_dir($path))
         {
             $handle = opendir($path);
-            // Get file path recursively
+            // FIXME : need to run recursively
             while (FALSE !== ($file = readdir($handle))) 
             {
                 if (is_dir($file))
