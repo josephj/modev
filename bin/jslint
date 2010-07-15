@@ -66,7 +66,7 @@ function check_dir($dir, $recursive = TRUE)
 // use jslint to check single file
 function check_file($file)
 {
-    $rtn = exec("java -jar /home/m/lib/java/rhino-1.7r2/js.jar /home/m/lib/jslint/jslint.js " . $file, $output, $rtn_var);
+    $rtn = exec("java -jar /var/www/josephj/lab/modev/share/lib/js.jar /var/www/josephj/lab/modev/share/tool/jslint/jslint.js " . $file, $output, $rtn_var);
 
     //Note: jslint always return 0
     //if ($rtn_var == 0) return 0;
