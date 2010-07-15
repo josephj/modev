@@ -1,3 +1,4 @@
+/*global Y*/
 Y.Core.register("navigation", function () {
     return  {
         init : function (api) {
@@ -7,5 +8,5 @@ Y.Core.register("navigation", function () {
             this.node = this.api.getViewNode();
             this.node.plug(Y.Plugin.NodeMenuNav);
         }
-    }
+    };
 }());
