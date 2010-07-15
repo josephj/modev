@@ -1555,7 +1555,7 @@ class PHP_CodeSniffer
 
         $configFile = dirname(__FILE__).'/CodeSniffer.conf';
         if (is_file($configFile) === false) {
-            $configFile = '/usr/share/pear/data/PHP_CodeSniffer/CodeSniffer.conf';
+            $configFile = '/var/www/josephj/lab/modev/share/pear/data/PHP_CodeSniffer/CodeSniffer.conf';
         }
 
         if (is_file($configFile) === false) {

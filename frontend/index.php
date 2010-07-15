@@ -30,7 +30,8 @@ foreach ($feed as $item)
         unset($cache);
     }
 }
-// view 
+
+// view
 require_once VIEW_PATH . "index.php";
 
 ?>
