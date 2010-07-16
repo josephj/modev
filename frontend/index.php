@@ -18,8 +18,7 @@ $static_html["bottom"] = $static->get_bottom_files();
 $feed = getPhoto();
 $feed = $feed["items"];
 $photos = array();
-foreach ($feed as $item)
-{
+foreach ($feed as $item) {
     if (preg_match("/(http:\/\/.+static.flickr.com\/\d+\/\d+_[0-9a-z]+)_m\.jpg/", $item["media"]["m"], $result))
     {
         $cache = array();
