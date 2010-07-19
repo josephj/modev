@@ -1,0 +1,81 @@
+#!/usr/bin/php
+<?php $output = array(); $rc     = 0;
+exec("git rev-parse --verify HEAD 2> /dev/null", $output, $rc);
+if ($rc == 0)  
+{
+    $against = "HEAD";
+}
+else           
+{
+    $against = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+}
+exec("git diff-index --cached --name-only ". $against, $output);
+//exec("git diff-index --name-only ". $against, $output);
+$php_pattern  = "/\.(php|css)$/";
+$js_pattern = "/\.js$/";
+$exit_status = 0;
+// Check Code Standard Error
+$php_files = array();
+$js_files = array();
+foreach ($output as $file) 
+{
+    if (preg_match($php_pattern, $file)) 
+    {
+        $php_files[] = escapeshellarg($file);
+    }
+    if (preg_match($js_pattern, $file)) 
+    {
+        $js_files[] = escapeshellarg($file);
+    }
+}
+$phpcs_output = array();
+$jslint_output = array();
+$return = 0;
+$list = implode(" ", $php_files);
+if (count($php_files))
+{
+    exec("phpcs -n --report=summary " . $list, $phpcs_output, $return);
+    if ($return == 1)
+    {
+        $exit_status = 1;
+        $phpcs_output = array_slice($phpcs_output, 2);
+        array_splice($phpcs_output, count($phpcs_output) - 4, 2);
+    }
+}
+if (count($js_files))
+{
+    foreach ($js_files as $file)
+    {
+        exec("java -jar /var/www/josephj/lab/modev/share/lib/js.jar /var/www/josephj/lab/modev/share/tool/jslint/jslint-precommit.js ". $file, $output, $return);
+        if ($return == 0) 
+        {
+            continue;
+        }
+        $jslint_output[] = implode("\n", $output);
+        $exit_status = 1;
+    }
+}
+if ($exit_status == 1)
+{
+    echo "\nCOMMIT FAILED!\n";
+    if (count($phpcs_output))
+    {
+        echo "======================================================================================\n";
+        echo "PHP_CodeSniffer Error Report \n";
+        echo "======================================================================================\n";
+        echo implode("\n", $phpcs_output);
+        echo "======================================================================================\n\n";
+    }
+    if (count($jslint_output))
+    {
+        echo "======================================================================================\n";
+        echo "JSLint Error report \n";
+        echo "======================================================================================\n";
+        echo implode("\n", $jslint_output);
+        echo "======================================================================================\n\n";
+    }
+    echo "Please fix your code and commit again.\n\n";
+}
+
+exit($exit_status);
+?>
