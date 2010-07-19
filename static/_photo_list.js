@@ -1,75 +1,113 @@
-Y.Core.register("photo-list", {
-    api: null,
-    node: null,
-    previousImg: null,
-    init: function (api) {
-        // 注册要听取的事件
-        api.listen("photo-filter-submit");
-        api.listen("photo-filter-response");
-        // 将 api 介面提升至全域
-        this.api = api;
-    },
-    onviewload: function () {
-        // shortcut 方便存取
-        var node = this.api.getViewNode(),
-            api  = this.api;
-        // 绑定照片点选 click 事件
-        Y.delegate("click", function (e) {
-            if (this.previousImg) {
-                this.previousImg.removeClass("selected");
-            }
-            this.previousImg = e.currentTarget;
-            this.previousImg.addClass("selected");
-            e.preventDefault();
+/*global Y, window */
+Y.Core.register("photo-list", function () {
+    var api, 
+        node,
+        lastImg,
+        //===========================
+        // Private Functions & Events
+        //===========================
+        /* 
+         * User photo click event handler
+         * @event photoClickHandler
+         * @param event {Y.Event} Event object
+         * @private
+         * @return void
+         */
+        photoClickHandler = function (e) {
             Y.log("photoClickHandler()", "info", "#photo-list");
-            api.broadcast("photo-list-click", this.previousImg.get("src"));
+            e.preventDefault();
+            if (lastImg) {
+                lastImg.removeClass("selected");
+            }
+            lastImg = e.currentTarget;
+            lastImg.addClass("selected");
+            api.broadcast("photo-list-click", lastImg.get("src"));
             window.scrollTo(0, 0);
-        }, node, "img", this);
-        // 将 module 节点提升至全域
-        this.node = node;
-        this.previousImg = node.one("img");
-        this.previousImg.addClass("selected");
-        this.api.broadcast("photo-list-rendered", this.previousImg.get("src"));
-    },
-    onmessage: function (eventType, callerName, data) {
-        Y.log(arguments.callee.name + " : " + eventType, "info", "#photo-list"); 
-        switch (eventType) {
-            case "photo-filter-response" : 
-                this._updateUI(data);
-                this.node.one(".bd").removeClass("loading");
-            break;
-            case "photo-filter-submit" :
-                this.node.one(".bd").set("innerHTML", "");
-                this.node.one(".bd").addClass("loading");
-            break;
-        }        
-    },
-    /* 
-     * 依照取得的 Flickr Feed 进行画面的更新
-     * @method _updateUI
-     * @param data {Object} Flickr photo API feed
-     * @private
-     * @return void
-     */
-    _updateUI: function (data) {
-        var items    = data.photos.photo,
-            node     = this.node;
-            bodyNode = node.one(".bd"),
-            html     = [],
-            i        = null,
-            img      = "",
-            link     = "";
+        },
+        /* 
+         * Update UI when photo data feed has received
+         * @method updateUI
+         * @param data {Object} Photo data feed 
+         * @private
+         * @return void
+         */
+        updateUI = function (data) {
+            Y.log("updateUI()", "info", "#photo-list");
+            var items    = data.photos.photo,
+                item     = null,
+                bodyNode = node.one(".bd"),
+                html     = [],
+                i        = null,
+                img      = "",
+                link     = "";
 
-        html.push("<ul class=\"clearfix\">");
-        for (i in items) {
-            img  = "http://farm" + items[i]["farm"] + ".static.flickr.com/" + items[i]["server"] + "/" + items[i]["id"] + "_" + items[i]["secret"]+"_s.jpg"; 
-            link = "http://www.flickr.com/photos/" + items[i]["owner"] + "/" + items[i]["id"];  
-            html.push("<li><a href=\"" + link + "\" title=\"" + items[i].title + "\"><img src=\"" + img + "\"></a></li>");    
-        }
-        html.push("</ul>");
-        bodyNode.set("innerHTML", html.join(""));
-        this.previousImg = node.one("img");
-        this.previousImg.addClass("selected");
-        this.api.broadcast("photo-list-rendered", this.previousImg.get("src"));
-    }
-});
+            html.push("<ul class=\"clearfix\">");
+            for (i in items) {
+                if (items[i].hasProperty("farm")) {
+                    item = items[i];
+                    img  = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_s.jpg"; 
+                    link = "http://www.flickr.com/photos/" + item.owner + "/" + item.id;  
+                    html.push("<li><a href=\"" + link + "\" title=\"" + item.title + "\"><img src=\"" + img + "\"></a></li>");
+                }
+            }
+            html.push("</ul>");
+            bodyNode.set("innerHTML", html.join(""));
+            lastImg = node.one("img");
+            lastImg.addClass("selected");
+            api.broadcast("photo-list-rendered", lastImg.get("src"));
+        },
+        //=========================
+        // pubilc functions 
+        //=========================
+        /* 
+         * Module initialization 
+         * @event init
+         * @param api {Y.Sandbox} Module API 
+         * @public
+         * @return void
+         */
+        init = function (sandbox) {
+            Y.log("init()", "info", "#photo-list");
+            api = sandbox;
+            api.listen("photo-filter-submit");
+            api.listen("photo-filter-response");
+        },
+        /* 
+         * Module content ready event
+         * @event onviewload 
+         * @public
+         * @return void
+         */
+        onviewload = function () {
+            Y.log("onviewload()", "info", "#photo-list");
+            node = api.getViewNode();
+            Y.delegate("click", photoClickHandler, node, "img", this);
+            lastImg = node.one("img");
+            lastImg.addClass("selected");
+            api.broadcast("photo-list-rendered", lastImg.get("src"));
+        },
+        /* 
+         * Module message receive event
+         * @event onmessage
+         * @public
+         * @return void
+         */
+        onmessage = function (eventName, callerId, callerData) {
+            Y.log("onmessage() : " + eventName, "info", "#photo-list"); 
+            switch (eventName) {
+            case "photo-filter-response" : 
+                updateUI(callerData);
+                node.one(".bd").removeClass("loading");
+                break;
+            case "photo-filter-submit" :
+                node.one(".bd").set("innerHTML", "");
+                node.one(".bd").addClass("loading");
+                break;
+            }        
+        };
+    return {
+        init: init,
+        onviewload: onviewload,
+        onmessage: onmessage
+    };
+}());

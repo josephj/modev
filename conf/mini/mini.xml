@@ -26,7 +26,8 @@
         <file type="js" src="yui/3.1.1/node/node-event-simulate.js" />
         <file type="js" src="yui/3.1.1/node-focusmanager/node-focusmanager.js" />
         <file type="js" src="yui/3.1.1/substitute/substitute.js" />
-        <file type="js"  src="core.js" /> 
+        <file type="js" src="core.js" /> 
+        <file type="js" src="sandbox.js" /> 
     </module>
 
     <module id="index">

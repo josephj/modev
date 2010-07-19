@@ -55,7 +55,7 @@ if (count($js_files))
         $exit_status = 1;
     }
 }
-if ($exit_status == 1)
+if (1 === $exit_status)
 {
     echo "\nCOMMIT FAILED!\n";
     if (count($phpcs_output))
