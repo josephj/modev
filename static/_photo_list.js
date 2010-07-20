@@ -32,7 +32,13 @@ Y.Core.register("photo-list", function () {
          * @return void
          */
         updateUI = function (data) {
-            Y.log("updateUI()", "info", "#photo-list");
+            Y.log("updateUI() is initialized ", "info", "#photo-list");
+            // the feed is empty
+            if (!parseInt(data.photos.total, 10)) {
+                node.one(".bd").removeClass("loading");
+                Y.log("updateUI() data is empty.", "info", "#photo-list");
+                return false;
+            }
             var items    = data.photos.photo,
                 item     = null,
                 bodyNode = node.one(".bd"),
@@ -43,18 +49,18 @@ Y.Core.register("photo-list", function () {
 
             html.push("<ul class=\"clearfix\">");
             for (i in items) {
-                if (items[i].hasProperty("farm")) {
-                    item = items[i];
-                    img  = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_s.jpg"; 
-                    link = "http://www.flickr.com/photos/" + item.owner + "/" + item.id;  
-                    html.push("<li><a href=\"" + link + "\" title=\"" + item.title + "\"><img src=\"" + img + "\"></a></li>");
-                }
+                item = items[i];
+                img  = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_s.jpg"; 
+                link = "http://www.flickr.com/photos/" + item.owner + "/" + item.id;  
+                html.push("<li><a href=\"" + link + "\" title=\"" + item.title + "\"><img src=\"" + img + "\"></a></li>");
             }
             html.push("</ul>");
             bodyNode.set("innerHTML", html.join(""));
             lastImg = node.one("img");
             lastImg.addClass("selected");
             api.broadcast("photo-list-rendered", lastImg.get("src"));
+            Y.log("updateUI() has updated successfully.", "info", "#photo-list");
+            return true;
         },
         //=========================
         // pubilc functions 
