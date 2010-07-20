@@ -23,9 +23,9 @@ YUI.add("sandbox", function (Y) {
          * @public
          * @return void
          */
-        listen: function (msgName) {
+        listen: function (msgName, callback) {
             Y.log("listen(\"" + msgName + "\") for #" + this.id + " is executed.", "info", "Sandbox"); 
-            Y.Core._addListener(this.id, msgName);
+            Y.Core._addListener(this.id, msgName, callback);
         },
         /* 
          * Module gets YUI Node instance.
@@ -39,6 +39,6 @@ YUI.add("sandbox", function (Y) {
         }
     };
     Y.Sandbox = Sandbox;
-});
+}, "3.1.1", ["event-custom"]);
 var Y = YUI();
 Y.use("*");

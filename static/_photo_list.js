@@ -21,7 +21,7 @@ Y.Core.register("photo-list", function () {
             }
             lastImg = e.currentTarget;
             lastImg.addClass("selected");
-            api.broadcast("photo-list-click", lastImg.get("src"));
+            api.broadcast("photo-list:click", lastImg.get("src"));
             window.scrollTo(0, 0);
         },
         /* 
@@ -58,9 +58,17 @@ Y.Core.register("photo-list", function () {
             bodyNode.set("innerHTML", html.join(""));
             lastImg = node.one("img");
             lastImg.addClass("selected");
-            api.broadcast("photo-list-rendered", lastImg.get("src"));
+            api.broadcast("photo-list:rendered", lastImg.get("src"));
             Y.log("updateUI() has updated successfully.", "info", "#photo-list");
             return true;
+        },
+        submitReceiveHandler = function (msgName, callerId, callerData) {
+            node.one(".bd").set("innerHTML", "");
+            node.one(".bd").addClass("loading");
+        },
+        dataReceiveHandler = function (msgName, callerId, callerData) {
+            updateUI(callerData);
+            node.one(".bd").removeClass("loading");
         },
         //=========================
         // pubilc functions 
@@ -75,8 +83,8 @@ Y.Core.register("photo-list", function () {
         init = function (sandbox) {
             Y.log("init()", "info", "#photo-list");
             api = sandbox;
-            api.listen("photo-filter-submit");
-            api.listen("photo-filter-response");
+            api.listen("photo-filter:submit", submitReceiveHandler);
+            api.listen("photo-filter:response", dataReceiveHandler);
         },
         /* 
          * Module content ready event
@@ -90,7 +98,7 @@ Y.Core.register("photo-list", function () {
             Y.delegate("click", photoClickHandler, node, "img", this);
             lastImg = node.one("img");
             lastImg.addClass("selected");
-            api.broadcast("photo-list-rendered", lastImg.get("src"));
+            api.broadcast("photo-list:rendered", lastImg.get("src"));
         },
         /* 
          * Module message receive event
@@ -100,16 +108,6 @@ Y.Core.register("photo-list", function () {
          */
         onmessage = function (eventName, callerId, callerData) {
             Y.log("onmessage() : " + eventName, "info", "#photo-list"); 
-            switch (eventName) {
-            case "photo-filter-response" : 
-                updateUI(callerData);
-                node.one(".bd").removeClass("loading");
-                break;
-            case "photo-filter-submit" :
-                node.one(".bd").set("innerHTML", "");
-                node.one(".bd").addClass("loading");
-                break;
-            }        
         };
     return {
         init: init,

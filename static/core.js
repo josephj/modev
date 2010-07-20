@@ -2,35 +2,33 @@
 YUI.add("core", function (Y) {
     var registeredModules = [],
         listeners = {},
+        maps = [],
         //===========================
         // Private Functions & Events
         //===========================
         /* 
          * Match event and modules which subscribes the event
          * @method match
-         * @param eventName {String} Event label name
+         * @param msgName {String} Event label name
          * @param callerId {String} The ID of the module which just broadcasts
          * @param callerData {Object} The data that a broadcasting module wants to share 
          * @return void
          */
-        match = function (eventName, callerId, callerData) {
-            Y.log("_match(\"" + eventName + "\", \"" + callerId + "\", \"" + callerData + "\") is executed.", "info", "Core");
+        match = function (msgName, callerId, callerData) {
+            Y.log("_match(\"" + msgName + "\", \"" + callerId + "\", \"" + callerData + "\") is executed.", "info", "Core");
             var modules = [], 
-                i,
-                x;
+                i;
+            // find modules which register this event
             for (i in listeners) {
-                for (x in listeners[i]) {
-                    if (listeners[i][x] === eventName) {
-                        // trigger module's onmessage event
-                        if (typeof registeredModules[i].onmessage === "undefined") {
-                            continue;
-                        }
-                        registeredModules[i].onmessage(eventName, callerId, callerData);    
-                        modules.push(i);
+                if (listeners[i].hasOwnProperty(msgName)) {
+                    listeners[i][msgName](msgName, callerId, callerData);
+                    modules.push(i);
+                    if (typeof registeredModules[i].onmessage !== "undefined") {
+                        registeredModules[i].onmessage(msgName, callerId, callerData);    
                     }
-                }    
+                }
             }    
-            Y.log("_match(\"" + eventName + "\", \"" + callerId + "\", \"" + callerData + "\") is executed successfully, " + modules.length + " module(s) is(are) influenced: \"#" + modules.join(", #") + "\"", "info", "Core");
+            Y.log("_match(\"" + msgName + "\", \"" + callerId + "\", \"" + callerData + "\") is executed successfully, " + modules.length + " module(s) is(are) influenced: \"#" + modules.join(", #") + "\"", "info", "Core");
         },
         /* 
          * Let a module listen for a specific message 
@@ -38,27 +36,23 @@ YUI.add("core", function (Y) {
          * @param moduleId {String} ID of the module which wants to listen.
          * @param msgName {String} Target message label name.
          * @private
-         * @return {Boolean} false if this module has already listened target message
+         * @return {String} listener ID for future use (remove, update...)
+         *                
          */
-        addListener = function (moduleId, msgName) {
+        addListener = function (moduleId, msgName, handler) {
             Y.log("_addListener(\"" + moduleId + "\", \"" + msgName + "\") is executed.", "info", "Core");
             var i, 
                 j,
-                listener;
+                listener,
+                listenerId;
+            handler = handler || function () {};
+            listenerId = Y.guid();
             if (typeof listeners[moduleId] === "undefined") {
-                listener = listeners[moduleId] = [msgName];
-                //Y.log("_addListener(\"" + moduleId + "\", \"" + msgName + "\") is added successfully", "info", "Core");
-                return true;
+                listeners[moduleId] = {};
             }
-            for (i in listener) {
-                if (listener[i] === msgName) {
-                    Y.log("_addListener(\"" + moduleId + "\", \"" + msgName + "\") has already existed", "info", "Core");
-                    return false;
-                }
-            }
-            listeners[moduleId].push(msgName);
-            //Y.log("_addListener(\"" + moduleId + "\", \"" + msgName + "\") is added successfully", "info", "Core");
-            return true;
+            listeners[moduleId][msgName] = handler;
+            maps[listenerId] = listeners[moduleId][msgName];
+            return listenerId;
         },
         /* 
          * Register a module to Core

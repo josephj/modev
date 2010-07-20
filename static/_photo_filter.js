@@ -20,7 +20,7 @@
              * @return void
              */
             getData = function (o) {
-                api.broadcast("photo-filter-response", o);
+                api.broadcast("photo-filter:response", o);
             },
             /* 
              * Make request to get data 
@@ -54,7 +54,7 @@
              */
             formSubmitHandler = function (e) {
                 e.preventDefault();
-                api.broadcast("photo-filter-submit");
+                api.broadcast("photo-filter:submit");
                 makeRequest();    
             },
             //=================================

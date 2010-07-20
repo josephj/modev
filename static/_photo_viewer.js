@@ -16,8 +16,8 @@
             init = function (sandbox) {
                 Y.log("init() is executed.", "info", "#photo-viewer");
                 api = sandbox;
-                api.listen("photo-list-rendered");
-                api.listen("photo-list-click");
+                api.listen("photo-list:rendered");
+                api.listen("photo-list:click");
             },
             /* 
              * Module content ready event
