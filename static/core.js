@@ -21,10 +21,16 @@ YUI.add("core", function (Y) {
             // find modules which register this event
             for (i in listeners) {
                 if (listeners[i].hasOwnProperty(msgName)) {
-                    listeners[i][msgName](msgName, callerId, callerData);
-                    modules.push(i);
-                    if (typeof registeredModules[i].onmessage !== "undefined") {
-                        registeredModules[i].onmessage(msgName, callerId, callerData);    
+                    // prevent user handlers' error
+                    try {
+                        listeners[i][msgName](msgName, callerId, callerData);
+                        if (typeof registeredModules[i].onmessage !== "undefined") {
+                            registeredModules[i].onmessage(msgName, callerId, callerData);    
+                        }
+                        modules.push(i);
+                    }
+                    catch (e) {
+                        Y.log("_match() " + e.message, "error", "Core");
                     }
                 }
             }    
@@ -77,7 +83,6 @@ YUI.add("core", function (Y) {
                 return;
             }
             Y.on("contentready", o.onviewload, "#" + moduleId, o);
-            //Y.log("register(\"" + moduleId + "\", \"" + o + "\") is executed successfully.", "info", "Core"); 
         };       
     Y.Core = {
         register: register,
