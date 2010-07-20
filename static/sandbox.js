@@ -4,16 +4,37 @@ YUI.add("sandbox", function (Y) {
         this.id = id;
     };
     Sandbox.prototype = {
-        broadcast: function (name, data) {
-            Y.log("broadcast('" + name + "') is executed.", "info", "Sandbox"); 
-            Y.Core._match(name, this.id, data);
+        /* 
+         * Module broadcasts its message to platform.
+         * @method broadcast
+         * @param msgName {String} Other module's message name.
+         * @param data {Object} Data which module wants to share.
+         * @public
+         * @return void
+         */
+        broadcast: function (msgName, data) {
+            Y.log("broadcast(\"" + msgName + "\" +) for #" + this.id + " is executed.", "info", "Sandbox"); 
+            Y.Core._match(msgName, this.id, data);
         },
-        listen: function (eventType) {
-            Y.log("listen('" + eventType + "') is executed.", "info", "Sandbox"); 
-            Y.Core._addListener(this.id, eventType);
+        /* 
+         * Module listens to specific event.
+         * @method listen 
+         * @param msgName {String} Target message name.
+         * @public
+         * @return void
+         */
+        listen: function (msgName) {
+            Y.log("listen(\"" + msgName + "\") for #" + this.id + " is executed.", "info", "Sandbox"); 
+            Y.Core._addListener(this.id, msgName);
         },
+        /* 
+         * Module gets YUI Node instance.
+         * @method getViewNode
+         * @public
+         * @return {Y.Node} Module YUI Node instance.
+         */
         getViewNode: function () {
-            Y.log("getViewNode() for module #" + this.id + " is executed.", "info", "Sandbox"); 
+            Y.log("getViewNode() for #" + this.id + " is executed.", "info", "Sandbox"); 
             return Y.one("#" + this.id);
         }
     };
