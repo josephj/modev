@@ -1,23 +1,50 @@
-Y.Core.register("photo-viewer", {
-    /* 
-     * 模块初始化
-     * @method init
-     */
-    init: function (api) {
-        this.api = api;
-        this.api.listen("photo-list-rendered");
-        this.api.listen("photo-list-click");
-    },
-    /* 
-     * 模块内容读取完毕 (YUI onContentReady)
-     * @method onviewload
-     * @return void
-     */
-    onviewload: function () {
-        var node = this.api.getViewNode();
-        this.node = node;
-    }, 
-    onmessage: function (name, callerId, data) {
-        this.node.one(".bd").set("innerHTML", "<img src='" + data.replace("_s", "") + "'>");
-    }
-});
+/*global Y */
+(function () {
+    Y.Core.register("photo-viewer", function () {
+        var api,
+            node,
+            //=================================
+            // Public methods
+            //=================================
+            /* 
+             * Module initialization
+             * @method init
+             * @param sandbox {Y.Sandbox}
+             * @public
+             * @return void
+             */
+            init = function (sandbox) {
+                Y.log("init() is executed.", "info", "#photo-viewer");
+                api = sandbox;
+                api.listen("photo-list-rendered");
+                api.listen("photo-list-click");
+            },
+            /* 
+             * Module content ready event
+             * @method onviewload
+             * @public
+             * @return void
+             */
+            onviewload = function () {
+                node = api.getViewNode();
+            }, 
+            /* 
+             * Module message receive event
+             * @event onmessage
+             * @param msgName {String} Message Label Name
+             * @param callerId {String} The caller module ID
+             * @param callerData {Object} The caller module's sharing data
+             * @public
+             * @return void
+             */
+            onmessage = function (msgName, callerId, callerData) {
+                node.one(".bd").set("innerHTML", "<img src='" + callerData.replace("_s", "") + "'>");
+            };
+
+        return {
+            init: init,
+            onviewload: onviewload,
+            onmessage: onmessage
+        };
+    }());
+}());
